@@ -24,5 +24,9 @@ const messages: Record<string, string> = {
   hemisphereNorth: "Seasons shown for the northern hemisphere",
   hemisphereSouth: "Seasons shown for the southern hemisphere",
   canvasLabel: "3D view of the planet's orbit around the Sun from outside",
+  tabOutside: "From outside",
+  tabEarth: "Near the planet",
+  tabHorizon: "From the ground",
+  comingSoon: "Coming soon",
 };
 export default messages;

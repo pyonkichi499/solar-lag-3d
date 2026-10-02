@@ -1,56 +1,24 @@
-// 3D ビュー（外から見る視点）。担当: R1-4
-// 視点は views/ 以下に分け、共通の Canvas・操作・文言はここに置く。
+// 3D ビュー。視点は views/ 以下に分け、共通の Canvas・操作・視点の切り替えはここに置く。
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { type CSSProperties, useMemo } from "react";
+import { type CSSProperties, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EARTH } from "../engine";
 import { useStore } from "../store/store";
 import { SET_COLORS } from "../theme";
-import { selectActive } from "./active";
-import { apsisDistances, seasonLengths } from "./geometry";
-import { type OutsideLabels, OutsideView } from "./views/OutsideView";
+import { earthView } from "./views/earth";
+import { horizonView } from "./views/horizon";
+import { outsideView } from "./views/outside";
+import type { Tr, ViewId, ViewModule } from "./views/types";
 
-const NORTH_POINTS = [
-  "vernalEquinox",
-  "summerSolstice",
-  "autumnalEquinox",
-  "winterSolstice",
-];
-const SOUTH_POINTS = [
-  "autumnalEquinox",
-  "winterSolstice",
-  "vernalEquinox",
-  "summerSolstice",
-];
-const NORTH_SEASONS = ["spring", "summer", "autumn", "winter"];
-const SOUTH_SEASONS = ["autumn", "winter", "spring", "summer"];
+const VIEWS: ViewModule[] = [outsideView, earthView, horizonView];
 
 export function Scene() {
-  const { t } = useTranslation();
-
+  const { t: rawT } = useTranslation();
+  const t = rawT as unknown as Tr;
+  const [viewId, setViewId] = useState<ViewId>("outside");
   const activeIndex = useStore((s) => s.activeIndex);
-  const params = useStore(selectActive);
   const color = SET_COLORS[activeIndex] ?? SET_COLORS[0];
-  const north = params.phi >= 0;
-
-  // Canvas の内側では i18n の文脈が届かないので、文言は外で作って渡す
-  const labels: OutsideLabels = {
-    sun: t("scene.sun"),
-    perihelion: t("scene.perihelion"),
-    aphelion: t("scene.aphelion"),
-    orbitCenter: t("scene.orbitCenter"),
-    observer: t("scene.observer"),
-    axis: t("scene.axis"),
-    // λ = 0, 90, 180, 270 の点の名前。南半球では季節が逆になる
-    points: (north ? NORTH_POINTS : SOUTH_POINTS).map((k) => t(`scene.${k}`)),
-  };
-
-  const lengths = useMemo(() => seasonLengths(params, EARTH), [params]);
-  const dist = apsisDistances(params.e);
-  const names = (north ? NORTH_SEASONS : SOUTH_SEASONS).map((k) =>
-    t(`scene.${k}`),
-  );
+  const view = VIEWS.find((v) => v.id === viewId) ?? outsideView;
 
   return (
     <div
@@ -61,66 +29,60 @@ export function Scene() {
         minHeight: 320,
       }}
     >
+      {/* 視点を切り替えるときは Canvas を作り直して、カメラを視点ごとの初期位置に戻す */}
       <Canvas
+        key={view.id}
         aria-label={t("scene.canvasLabel")}
-        camera={{ up: [0, 0, 1], position: [0.6, -3.2, 2.2], fov: 45 }}
+        camera={{ ...view.camera, up: view.camera.up }}
         dpr={[1, 2]}
       >
         <ambientLight intensity={0.25} />
-        <OutsideView labels={labels} color={color} />
-        <OrbitControls enablePan={false} minDistance={1.5} maxDistance={8} />
+        <view.Content color={color} t={t} />
+        <OrbitControls
+          enablePan={false}
+          minDistance={view.controls.minDistance}
+          maxDistance={view.controls.maxDistance}
+          target={view.controls.target}
+        />
       </Canvas>
-      <div style={overlay}>
-        <strong>{t("scene.seasonLengths")}</strong>
-        <div style={{ opacity: 0.7 }}>
-          {north ? t("scene.hemisphereNorth") : t("scene.hemisphereSouth")}
-        </div>
-        <table style={{ borderCollapse: "collapse" }}>
-          <tbody>
-            {names.map((n, i) => (
-              <tr key={n}>
-                <td style={{ paddingRight: 12 }}>{n}</td>
-                <td style={{ textAlign: "right" }}>
-                  {t("scene.days", { value: (lengths[i] ?? 0).toFixed(2) })}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <strong>{t("scene.apsides")}</strong>
-        <div>
-          {t("scene.perihelionDistance")}: {dist.perihelion.toFixed(4)}
-          {" / "}
-          {t("scene.aphelionDistance")}: {dist.aphelion.toFixed(4)}
-        </div>
+      <div role="tablist" style={tabs}>
+        {VIEWS.map((v) => (
+          <button
+            key={v.id}
+            type="button"
+            role="tab"
+            aria-selected={v.id === viewId}
+            onClick={() => setViewId(v.id)}
+            style={{ ...tab, ...(v.id === viewId ? tabActive : null) }}
+          >
+            {t(`scene.${v.tabKey}`)}
+          </button>
+        ))}
       </div>
-      <div style={note}>
-        {t("scene.notToScale")} ・ {t("scene.hint")}
-      </div>
+      <view.Overlay color={color} t={t} />
     </div>
   );
 }
 
-const overlay: CSSProperties = {
+const tabs: CSSProperties = {
   position: "absolute",
   top: 8,
   left: 8,
-  padding: "6px 10px",
-  fontSize: 12,
-  lineHeight: 1.5,
-  background: "rgba(0,0,0,0.55)",
-  color: "#fff",
-  borderRadius: 6,
-  pointerEvents: "none",
+  display: "flex",
+  gap: 4,
 };
 
-const note: CSSProperties = {
-  position: "absolute",
-  bottom: 6,
-  right: 8,
-  fontSize: 11,
+const tab: CSSProperties = {
+  padding: "3px 10px",
+  fontSize: 12,
   color: "#fff",
-  opacity: 0.8,
-  pointerEvents: "none",
-  textShadow: "0 0 3px #000",
+  background: "rgba(0,0,0,0.45)",
+  border: "1px solid rgba(255,255,255,0.35)",
+  borderRadius: 14,
+  cursor: "pointer",
+};
+
+const tabActive: CSSProperties = {
+  background: "rgba(255,255,255,0.9)",
+  color: "#111",
 };

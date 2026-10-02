@@ -24,5 +24,9 @@ const messages: Record<string, string> = {
   hemisphereNorth: "北半球の季節で表示",
   hemisphereSouth: "南半球の季節で表示",
   canvasLabel: "太陽と惑星の軌道を外から見た 3D 図",
+  tabOutside: "外から",
+  tabEarth: "地球のそば",
+  tabHorizon: "地表から",
+  comingSoon: "準備中です",
 };
 export default messages;
