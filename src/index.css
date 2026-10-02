@@ -434,3 +434,10 @@ h3 {
   border-left: 3px solid var(--set-color);
   padding-left: 8px;
 }
+
+.analemma-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--text);
+}

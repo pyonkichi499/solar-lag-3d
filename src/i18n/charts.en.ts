@@ -34,6 +34,11 @@ const messages: Record<string, string> = {
     "When the latitude crosses 0, the reference solstice switches by half a year and the chart jumps. This is physically correct.",
   chartLabel:
     "Yearly charts of sunrise, sunset, solar noon and the equation of time",
+  analemmaTitle: "Analemma (the Sun at the same clock time every day)",
+  analemmaX: "Equation of time [min] (right = Sun west of the meridian)",
+  analemmaY: "Declination",
+  analemmaNote:
+    "The Sun's position at the same local mean time, plotted over one year. The vertical spread comes from the axial tilt ε; the horizontal spread comes from the equation of time (tilt and eccentricity). The horizontal and vertical scales differ. The ring marks the date cursor.",
   setLabel: "Set {{name}}",
 };
 export default messages;

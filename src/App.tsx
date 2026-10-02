@@ -1,3 +1,4 @@
+import { Analemma } from "./charts/Analemma";
 import { Charts } from "./charts/Charts";
 import { Scene } from "./scene/Scene";
 import { usePlayback } from "./store/playback";
@@ -14,6 +15,7 @@ export function App() {
         <div className="col-left">
           <ParamPanel />
           <ResultsPanel />
+          <Analemma />
         </div>
         <div className="col-right">
           <div className="scene-wrap">

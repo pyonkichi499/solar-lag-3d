@@ -33,6 +33,11 @@ const messages: Record<string, string> = {
   equatorNote:
     "緯度が 0 をまたぐと基準の至点が半年分切り替わるため、グラフが大きく跳びます。物理的に正しい振る舞いです。",
   chartLabel: "日の出・日没・南中の年変化と均時差のグラフ",
+  analemmaTitle: "アナレンマ（毎日同じ時刻の太陽）",
+  analemmaX: "均時差 [分]（右 = 太陽が子午線より西）",
+  analemmaY: "赤緯",
+  analemmaNote:
+    "地方平均時の同じ時刻に見える太陽の位置を、1 年分重ねた図です。縦の広がりは地軸の傾き ε、横の広がりは均時差（傾きと離心率）で決まります。縦横の縮尺は別々です。丸は日付カーソルの位置です。",
   setLabel: "セット {{name}}",
 };
 export default messages;
