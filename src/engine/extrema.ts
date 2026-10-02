@@ -17,6 +17,7 @@ const SPECS: Record<LagKind, Spec> = {
   latestSunrise: { sign: -1, dir: 1, summer: false },
 };
 
+const FINE_STEPS = 100;
 const GOLDEN = (Math.sqrt(5) - 1) / 2;
 
 interface Sample {
@@ -47,9 +48,19 @@ export function findLag(p: Params, b: BodyConstants, kind: LagKind): LagResult {
     if (ev.kind === "event") return { n, v: spec.dir * ev.hours, polar: null };
     return { n, v: null, polar: ev.kind };
   };
+  const coarse: Sample[] = [];
+  for (let k = 0; k <= count; k++) coarse.push(sampleAt(ts - y / 2 + k * step));
+  // 白夜と極夜が 1 日未満の窓を挟んで直接切り替わる（高緯度の分点付近）と、
+  // 日ごとの標本では窓を見落とすので、その区間だけ細かく標本を足す
   const samples: Sample[] = [];
-  for (let k = 0; k <= count; k++)
-    samples.push(sampleAt(ts - y / 2 + k * step));
+  coarse.forEach((s, k) => {
+    samples.push(s);
+    const next = coarse[k + 1];
+    if (s.polar !== null && next?.polar != null && s.polar !== next.polar) {
+      for (let j = 1; j < FINE_STEPS; j++)
+        samples.push(sampleAt(s.n + ((next.n - s.n) * j) / FINE_STEPS));
+    }
+  });
 
   const value = (n: number): number => {
     const ev = riseSetOf(p, b, n, spec.sign);
@@ -83,7 +94,7 @@ export function findLag(p: Params, b: BodyConstants, kind: LagKind): LagResult {
     }
   };
 
-  for (let k = 1; k < count; k++) {
+  for (let k = 1; k < samples.length - 1; k++) {
     const before = samples[k - 1];
     const at = samples[k];
     const after = samples[k + 1];

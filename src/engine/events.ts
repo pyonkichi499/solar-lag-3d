@@ -60,10 +60,13 @@ export function riseSetOf(
   if (c > 1) return { kind: "polarNight" };
   if (c < -1) return { kind: "polarDay" };
 
+  // 不動点反復で収束し、その点でも cos H が [−1, 1] に収まるなら本物の日没・日の出
   let t = transit.t;
   let converged = false;
   for (let i = 0; i < MAX_ITER; i++) {
-    const tn = n + eventHours(p, sunStateAt(p, b, t), sign) / 24;
+    const sun = sunStateAt(p, b, t);
+    if (Math.abs(cosHourAngle(p, sun)) > 1) break;
+    const tn = n + eventHours(p, sun, sign) / 24;
     const d = Math.abs(tn - t);
     t = tn;
     if (d < TOL_DAYS) {
@@ -71,27 +74,56 @@ export function riseSetOf(
       break;
     }
   }
-  if (!converged) t = bisect(p, b, n, sign, transit.t) ?? t;
-  return { kind: "event", t, hours: 24 * (t - n) };
+  if (converged && Math.abs(cosHourAngle(p, sunStateAt(p, b, t))) <= 1)
+    return { kind: "event", t, hours: 24 * (t - n) };
+
+  // 白夜・極夜の境界の近くでは、日没・日の出の瞬間に太陽が h₀ を横切らないことがある。
+  // 高度が h₀ を横切る点を南中から前後に走査して求め、なければ白夜・極夜とする
+  const root = crossing(p, b, n, sign, transit);
+  if (root === null) return { kind: "polarDay" };
+  return { kind: "event", t: root, hours: 24 * (root - n) };
 }
 
-// 境界のごく近くで不動点反復が収束しないときの保険
-function bisect(
+/** sin(高度) − sin(h₀)。時刻 t（実数の日）での値 */
+function altitudeExcess(p: Params, b: BodyConstants, n: number, t: number) {
+  const sun = sunStateAt(p, b, t);
+  const phi = p.phi * DEG;
+  const dec = sun.declination * DEG;
+  const ha = 15 * (24 * (t - n) + sun.equationOfTime - 12) * DEG;
+  return (
+    Math.sin(phi) * Math.sin(dec) +
+    Math.cos(phi) * Math.cos(dec) * Math.cos(ha) -
+    Math.sin(p.h0 * DEG)
+  );
+}
+
+const SCAN_STEPS = 48;
+const SCAN_SPAN = 0.6;
+
+// 南中（高度 > h₀）から日没側（sign = +1）・日の出側（−1）へ走査し、
+// 高度が h₀ を下回る最初の点を二分法で求める。見つからなければ null
+function crossing(
   p: Params,
   b: BodyConstants,
   n: number,
   sign: 1 | -1,
-  tTransit: number,
+  transit: Transit,
 ): number | null {
-  const g = (t: number) =>
-    24 * (t - n) - eventHours(p, sunStateAt(p, b, t), sign);
-  let lo = tTransit - 0.75;
-  let hi = tTransit + 0.75;
-  if (g(lo) > 0 || g(hi) < 0) return null;
-  for (let i = 0; i < 100; i++) {
-    const mid = (lo + hi) / 2;
-    if (g(mid) < 0) lo = mid;
-    else hi = mid;
+  const f = (t: number) => altitudeExcess(p, b, n, t);
+  let prev = transit.t;
+  for (let i = 1; i <= SCAN_STEPS; i++) {
+    const cur = transit.t + (sign * i * SCAN_SPAN) / SCAN_STEPS;
+    if (f(cur) < 0) {
+      let above = prev;
+      let below = cur;
+      for (let k = 0; k < 100; k++) {
+        const mid = (above + below) / 2;
+        if (f(mid) >= 0) above = mid;
+        else below = mid;
+      }
+      return (above + below) / 2;
+    }
+    prev = cur;
   }
-  return (lo + hi) / 2;
+  return null;
 }
