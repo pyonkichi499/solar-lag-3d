@@ -111,11 +111,7 @@ describe("domePoint", () => {
   it("南中は常に正面（−y）に来る", () => {
     for (const p of [north, south]) {
       const r = dayEvents(p, EARTH, 100);
-      const d = domePoint(
-        sunAltAz(p, 100 + r.transit / 24),
-        1,
-        viewYaw(p.phi),
-      );
+      const d = domePoint(sunAltAz(p, 100 + r.transit / 24), 1, viewYaw(p.phi));
       expect(d[1]).toBeLessThan(0);
       expect(d[0]).toBeCloseTo(0, 6);
     }
