@@ -101,6 +101,8 @@ export type LagResult =
       lagDays: number;
       t: Time;
       boundary: "polarDay" | "polarNight";
+      /** 至点の前後半年の範囲にある、滑らかな局所極値（山）の数 */
+      otherExtrema: number;
     }
   | {
       kind: "undefined";

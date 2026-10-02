@@ -123,6 +123,7 @@ export function buildCell(
           info.extreme === "latest" ? "extremeLatest" : "extremeEarliest",
         ),
       }),
+      notes: lag.otherExtrema > 0 ? [t("otherExtrema")] : [],
       lagDays: lag.lagDays,
       boundary: lag.boundary,
     };

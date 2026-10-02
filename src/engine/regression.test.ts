@@ -126,3 +126,36 @@ describe("総当たりの走査との比較（日没最遅日）", () => {
     expect(Math.abs(bestT - lag.t)).toBeLessThan(0.05);
   });
 });
+
+describe("極端なパラメータでも反復が収束する", () => {
+  const extremes: Params[] = [
+    { epsilon: 89.9, e: 0.5, varpi: 0, phi: 45, h0: -0.833 },
+    { epsilon: 89.9, e: 0.5, varpi: 180, phi: -45, h0: 2 },
+    { epsilon: 89.9, e: 0.5, varpi: 283, phi: 0, h0: -2 },
+    { epsilon: 0.01, e: 0.5, varpi: 90, phi: 89.9, h0: 0 },
+  ];
+  test.each(extremes)("%o", (p) => {
+    const y = computeYear(p, EARTH);
+    for (const d of y.days) {
+      expect(Number.isFinite(d.transit)).toBe(true);
+      // 南中の不動点 t = n + (12 − E(t))/24 を満たす
+      const t = d.day + d.transit / 24;
+      expect(
+        Math.abs(d.day + (12 - sunAt(p, EARTH, t).equationOfTime) / 24 - t),
+      ).toBeLessThan(1e-9);
+      for (const ev of [d.sunrise, d.sunset]) {
+        if (ev.kind === "event") expect(Number.isFinite(ev.hours)).toBe(true);
+      }
+    }
+  });
+});
+
+describe("昼の長さの最大は連続値で求める", () => {
+  test("整数日の最大以上で、その差は 1 秒未満程度の小ささ", () => {
+    const y = computeYear(base, EARTH);
+    const integerMax = Math.max(...y.days.map((d) => d.dayLength));
+    expect(y.dayLength).not.toBeNull();
+    expect((y.dayLength?.max ?? 0) - integerMax).toBeGreaterThanOrEqual(-1e-9);
+    expect((y.dayLength?.max ?? 0) - integerMax).toBeLessThan(1 / 3600);
+  });
+});

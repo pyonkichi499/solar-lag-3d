@@ -137,6 +137,7 @@ export function findLag(p: Params, b: BodyConstants, kind: LagKind): LagResult {
     lagDays: best.lag,
     t: best.t,
     boundary: best.boundary ?? "polarDay",
+    otherExtrema: cands.filter((c) => c.peak).length,
   };
 }
 

@@ -613,8 +613,9 @@ describe("computeYear の構造", () => {
           const y = b.lags[kind];
           expect(y.kind).toBe(x.kind);
           if (x.kind === "peak" && y.kind === "peak") {
-            expect(Math.abs(x.lagDays - y.lagDays)).toBeLessThan(1);
-            expect(Math.abs(x.hours - y.hours)).toBeLessThan(0.01);
+            // 実測（300 組）の最大差は lag 1.6e-4 日、hours 2e-12 h。約 6 倍の余裕を取る
+            expect(Math.abs(x.lagDays - y.lagDays)).toBeLessThan(1e-3);
+            expect(Math.abs(x.hours - y.hours)).toBeLessThan(1e-6);
           }
         }
         if (a.dayLength && b.dayLength) {
@@ -627,7 +628,7 @@ describe("computeYear の構造", () => {
           ).toBeLessThan(0.01);
         }
       }),
-      { numRuns: 15 },
+      { numRuns: 40 },
     );
   });
 

@@ -48,6 +48,50 @@ function dayLengthOf(rise: RiseSetEvent, set: RiseSetEvent): number {
   return set.hours - rise.hours;
 }
 
+/** 実数の日 n での昼の長さ（日の出と日没の両方があるときだけ。なければ null） */
+function continuousDayLength(
+  params: Params,
+  body: BodyConstants,
+  n: number,
+): number | null {
+  const { sunrise, sunset } = dayEvents(params, body, n);
+  if (sunrise.kind !== "event" || sunset.kind !== "event") return null;
+  return sunset.hours - sunrise.hours;
+}
+
+function refineMaxDayLength(
+  params: Params,
+  body: BodyConstants,
+  lo: number,
+  hi: number,
+): number {
+  const golden = (Math.sqrt(5) - 1) / 2;
+  const f = (n: number) =>
+    continuousDayLength(params, body, n) ?? Number.NEGATIVE_INFINITY;
+  let a = lo;
+  let b = hi;
+  let c = b - golden * (b - a);
+  let d = a + golden * (b - a);
+  let fc = f(c);
+  let fd = f(d);
+  for (let i = 0; i < 60; i++) {
+    if (fc >= fd) {
+      b = d;
+      d = c;
+      fd = fc;
+      c = b - golden * (b - a);
+      fc = f(c);
+    } else {
+      a = c;
+      c = d;
+      fc = fd;
+      d = a + golden * (b - a);
+      fd = f(d);
+    }
+  }
+  return Math.max(fc, fd);
+}
+
 /** 日 n の日の出・日没・南中 */
 export function dayEvents(
   params: Params,
@@ -105,9 +149,16 @@ export function computeYear(
     // 夏至の前後半年は整数日ごとの昼の長さの最大を取る（夏至を含む日を必ず含む）
     const atSolstice = dayEvents(params, body, Math.floor(ts)).dayLength;
     let max = atSolstice;
+    let bestN = Math.floor(ts);
     for (let n = Math.ceil(ts - half); n <= ts + half; n++) {
-      max = Math.max(max, dayEvents(params, body, n).dayLength);
+      const len = dayEvents(params, body, n).dayLength;
+      if (len > max) {
+        max = len;
+        bestN = n;
+      }
     }
+    // 整数日の最大の前後 1 日を、実数の日として黄金分割探索で精密化する
+    max = Math.max(max, refineMaxDayLength(params, body, bestN - 1, bestN + 1));
     dayLength = { atSolstice, max };
   }
 
