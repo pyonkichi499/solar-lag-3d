@@ -7,7 +7,11 @@ import chartsEn from "./charts.en";
 import chartsJa from "./charts.ja";
 import en from "./en";
 import ja from "./ja";
+import sceneEarthEn from "./scene.earth.en";
+import sceneEarthJa from "./scene.earth.ja";
 import sceneEn from "./scene.en";
+import sceneHorizonEn from "./scene.horizon.en";
+import sceneHorizonJa from "./scene.horizon.ja";
 import sceneJa from "./scene.ja";
 
 /** 翻訳リソースの型。charts / scene は担当側が埋めるので緩く持つ */
@@ -18,8 +22,20 @@ export type Translation = typeof ja & {
 export type UiKey = keyof typeof ja;
 
 const resources: Record<Lang, { translation: Translation }> = {
-  ja: { translation: { ...ja, charts: chartsJa, scene: sceneJa } },
-  en: { translation: { ...en, charts: chartsEn, scene: sceneEn } },
+  ja: {
+    translation: {
+      ...ja,
+      charts: chartsJa,
+      scene: { ...sceneJa, ...sceneEarthJa, ...sceneHorizonJa },
+    },
+  },
+  en: {
+    translation: {
+      ...en,
+      charts: chartsEn,
+      scene: { ...sceneEn, ...sceneEarthEn, ...sceneHorizonEn },
+    },
+  },
 };
 
 /** Intl に渡すロケール。zh-Hans / zh-Hant を足すときはここと resources に追加する */
