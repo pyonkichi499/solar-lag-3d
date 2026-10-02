@@ -97,7 +97,9 @@ function Solstices({
   bottom: number;
   withLabel: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t: typedT } = useTranslation();
+  // 季節ラベルのキーは組み立てて作るため、型付きキーのチェックを外して呼ぶ
+  const t = typedT as unknown as (key: string) => string;
   const south = s.hemisphere === "south";
   const color = SET_COLORS[s.index] ?? SET_COLORS[0];
   const dash = s.formalSolstice ? "5 4" : undefined;

@@ -2,11 +2,14 @@
 // App の結線の煙テスト（ブラウザでの見た目は確認していない）
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { App } from "../App";
 import { setupI18n } from "../i18n";
 import { DEFAULT_PARAMS } from "../presets";
 import { useStore } from "../store/store";
+
+// jsdom には ResizeObserver や WebGL がないので、3D は差し替える
+vi.mock("../scene/Scene", () => ({ Scene: () => null }));
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
