@@ -1,3 +1,28 @@
 // scene の文言（en）。キーは useTranslation の "scene.<キー>" で参照する
-const messages: Record<string, string> = {};
+const messages: Record<string, string> = {
+  sun: "Sun",
+  perihelion: "Perihelion",
+  aphelion: "Aphelion",
+  orbitCenter: "Orbit center",
+  vernalEquinox: "March equinox",
+  summerSolstice: "June solstice",
+  autumnalEquinox: "September equinox",
+  winterSolstice: "December solstice",
+  observer: "Observer",
+  axis: "Axis",
+  notToScale: "Sizes are not to scale",
+  hint: "Drag to rotate, scroll to zoom",
+  seasonLengths: "Season lengths",
+  spring: "Spring",
+  summer: "Summer",
+  autumn: "Autumn",
+  winter: "Winter",
+  days: "{{value}} days",
+  apsides: "Distance from the Sun (semi-major axis = 1)",
+  perihelionDistance: "Perihelion",
+  aphelionDistance: "Aphelion",
+  hemisphereNorth: "Seasons shown for the northern hemisphere",
+  hemisphereSouth: "Seasons shown for the southern hemisphere",
+  canvasLabel: "3D view of the planet's orbit around the Sun from outside",
+};
 export default messages;

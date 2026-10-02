@@ -1,3 +1,28 @@
 // scene の文言（ja）。キーは useTranslation の "scene.<キー>" で参照する
-const messages: Record<string, string> = {};
+const messages: Record<string, string> = {
+  sun: "太陽",
+  perihelion: "近日点",
+  aphelion: "遠日点",
+  orbitCenter: "軌道の中心",
+  vernalEquinox: "春分点",
+  summerSolstice: "夏至点",
+  autumnalEquinox: "秋分点",
+  winterSolstice: "冬至点",
+  observer: "観測者",
+  axis: "地軸",
+  notToScale: "大きさは実寸ではありません",
+  hint: "ドラッグで回転、ホイールで拡大縮小",
+  seasonLengths: "季節の長さ",
+  spring: "春",
+  summer: "夏",
+  autumn: "秋",
+  winter: "冬",
+  days: "{{value}} 日",
+  apsides: "太陽との距離（軌道長半径 = 1）",
+  perihelionDistance: "近日点",
+  aphelionDistance: "遠日点",
+  hemisphereNorth: "北半球の季節で表示",
+  hemisphereSouth: "南半球の季節で表示",
+  canvasLabel: "太陽と惑星の軌道を外から見た 3D 図",
+};
 export default messages;
