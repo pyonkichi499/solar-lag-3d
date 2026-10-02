@@ -147,9 +147,10 @@ export function computeYear(
   let dayLength: YearResult["dayLength"] = null;
   if (params.epsilon !== 0) {
     // 夏至の前後半年は整数日ごとの昼の長さの最大を取る（夏至を含む日を必ず含む）
-    const atSolstice = dayEvents(params, body, Math.floor(ts)).dayLength;
+    // 夏至の瞬間がちょうど正午（日の中央）に来る日の昼の長さ。日の境界の取り方に依存しない
+    const atSolstice = dayEvents(params, body, ts - 0.5).dayLength;
     let max = atSolstice;
-    let bestN = Math.floor(ts);
+    let bestN = Math.round(ts);
     for (let n = Math.ceil(ts - half); n <= ts + half; n++) {
       const len = dayEvents(params, body, n).dayLength;
       if (len > max) {

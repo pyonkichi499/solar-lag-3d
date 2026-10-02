@@ -598,6 +598,10 @@ describe("computeYear の構造", () => {
     // 平坦な極値の位置は数値の反復誤差で動きうるため lag は 1 日、hours は 0.01 h（36 秒）まで許す
     fc.assert(
       fc.property(earthLikeArb, (p) => {
+        // 白夜・極夜の境界（φ + ε − 90 = ±h₀）ちょうどでは、日の出・日没が存在するかが
+        // 1e-9 程度の数値の差で決まる。南北で別々に丸められるので、鏡像の比較から外す
+        const edge = p.phi + p.epsilon - 90;
+        fc.pre(Math.abs(edge - p.h0) > 0.05 && Math.abs(edge + p.h0) > 0.05);
         const q: Params = { ...p, varpi: (p.varpi + 180) % 360, phi: -p.phi };
         const a = computeYear(p, EARTH);
         const b = computeYear(q, EARTH);
@@ -619,18 +623,20 @@ describe("computeYear の構造", () => {
           }
         }
         if (a.dayLength && b.dayLength) {
-          // 夏至を含む日の取り方（日の境界）が違うので 0.01 h まで許す。夏至付近は 2 次でしか変わらない
+          // 昼の長さは夏至の瞬間を日の中央にとる連続値で求めるので、鏡像とほぼ厳密に一致する
+          // （実測 3000 組の最大差は 1.7e-12 h。1e-6 h = 3.6 ミリ秒まで許す）
           expect(Math.abs(a.dayLength.max - b.dayLength.max)).toBeLessThan(
-            0.01,
+            1e-6,
           );
           expect(
             Math.abs(a.dayLength.atSolstice - b.dayLength.atSolstice),
-          ).toBeLessThan(0.01);
+          ).toBeLessThan(1e-6);
         }
       }),
       { numRuns: 40 },
     );
-  });
+    // 全テストの並列実行で CPU が競合しても間に合うよう、既定の 5 秒より長くする
+  }, 30_000);
 
   it("days は連続した整数日で、daysFromSolstice = day − summerSolstice、既定範囲を覆う", () => {
     const y = computeYear(TOKYO, EARTH);
