@@ -1,3 +1,39 @@
 // charts の文言（en）。キーは useTranslation の "charts.<キー>" で参照する
-const messages: Record<string, string> = {};
+const messages: Record<string, string> = {
+  timeTitle: "Sunrise, sunset and solar noon (local mean time)",
+  eotTitle: "Equation of time",
+  sunrise: "Sunrise",
+  sunset: "Sunset",
+  transit: "Solar noon",
+  polarDay: "Polar day",
+  polarNight: "Polar night",
+  summer: "Summer solstice",
+  summerSouth: "Summer solstice (December)",
+  winter: "Winter solstice",
+  winterSouth: "Winter solstice (June)",
+  summerFormal: "Nominal longitude 90°",
+  summerFormalSouth: "Nominal longitude 270°",
+  winterFormal: "Nominal longitude 270°",
+  winterFormalSouth: "Nominal longitude 90°",
+  lagAnnotation: "{{value}} days",
+  eotAxisMin: "Equation of time [min]",
+  eotAxisH: "Equation of time [h]",
+  dayAxis: "Days from summer solstice",
+  dateAxis: "Reference calendar date (A)",
+  cursorLabel: "{{value}} days from solstice",
+  markerPeak: "{{name}}: {{value}} days from the solstice",
+  markerBoundary: "{{name}} (polar day/night boundary): {{value}} days",
+  latestSunset: "Latest sunset",
+  earliestSunrise: "Earliest sunrise",
+  earliestSunset: "Earliest sunset",
+  latestSunrise: "Latest sunrise",
+  play: "Play",
+  pause: "Pause",
+  daySlider: "Day (days from summer solstice)",
+  equatorNote:
+    "When the latitude crosses 0, the reference solstice switches by half a year and the chart jumps. This is physically correct.",
+  chartLabel:
+    "Yearly charts of sunrise, sunset, solar noon and the equation of time",
+  setLabel: "Set {{name}}",
+};
 export default messages;
