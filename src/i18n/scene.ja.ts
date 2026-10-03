@@ -27,6 +27,5 @@ const messages: Record<string, string> = {
   tabOutside: "外から",
   tabEarth: "地球のそば",
   tabHorizon: "地表から",
-  comingSoon: "準備中です",
 };
 export default messages;
