@@ -49,6 +49,7 @@ export const LANGS = Object.keys(resources) as Lang[];
 function applyDocumentLang(lang: Lang) {
   if (typeof document !== "undefined") {
     document.documentElement.lang = lang;
+    document.title = i18n.t("appTitle", { lng: lang });
   }
 }
 

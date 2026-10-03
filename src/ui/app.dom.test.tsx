@@ -74,6 +74,7 @@ describe("App", () => {
 
     act(() => button("EN").click());
     expect(document.documentElement.lang).toBe("en");
+    expect(document.title).toBe("Solstice vs. latest sunset");
     expect(container.textContent).toContain("Latest sunset");
   });
 });
