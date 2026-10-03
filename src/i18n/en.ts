@@ -55,6 +55,9 @@ const en: typeof ja = {
   sideAfter: "right after",
   extremeLatest: "Latest",
   extremeEarliest: "Earliest",
+  peakHeightSunset: "Difference from sunset on the solstice day: {{seconds}} s",
+  peakHeightSunrise:
+    "Difference from sunrise on the solstice day: {{seconds}} s",
   otherExtrema: "There are other peaks as well",
   noSolstice: "No solstice exists (day length is constant)",
   noEvents: "Not defined",

@@ -30,6 +30,25 @@ const KIND_INFO: Record<
 /** ε がこの値より小さい（0 を除く）と、昼の長さの変化が小さい旨を注記する */
 export const SMALL_EPSILON = 0.5;
 
+/**
+ * 山の高さ [秒]：極値の日の日没（日の出）の時刻と、夏至を含む日のそれとの差。
+ * 夏至基準の 2 種類（日没最遅日・日の出最早日）で、どちらも日があるときだけ返す
+ */
+export function peakHeightSeconds(
+  kind: LagKind,
+  result: YearResult,
+): number | null {
+  if (kind !== "latestSunset" && kind !== "earliestSunrise") return null;
+  const lag = result.lags[kind];
+  if (lag.kind !== "peak") return null;
+  const row = result.days.find(
+    (d) => d.day === Math.floor(result.summerSolstice),
+  );
+  const ref = kind === "latestSunset" ? row?.sunset : row?.sunrise;
+  if (ref?.kind !== "event") return null;
+  return (lag.hours - ref.hours) * 3600;
+}
+
 export interface CellView {
   result: LagResult["kind"];
   /** 主表示。例：「+X.X日（6月XX日ごろ）」 */
@@ -97,13 +116,23 @@ export function buildCell(
     boundary: null,
   };
   if (lag.kind === "peak") {
+    const height = peakHeightSeconds(kind, result);
+    const notes: string[] = [];
+    if (height !== null) {
+      notes.push(
+        t(kind === "latestSunset" ? "peakHeightSunset" : "peakHeightSunrise", {
+          seconds: formatSigned(height, 0),
+        }),
+      );
+    }
+    if (lag.otherExtrema > 0) notes.push(t("otherExtrema"));
     return {
       ...base,
       text: t("lagPeak", {
         lag: formatSigned(lag.lagDays),
         date: formatCalendarDate(lag.t, locale),
       }),
-      notes: lag.otherExtrema > 0 ? [t("otherExtrema")] : [],
+      notes,
       lagDays: lag.lagDays,
     };
   }

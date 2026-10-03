@@ -52,6 +52,8 @@ const ja = {
   sideAfter: "直後",
   extremeLatest: "最遅",
   extremeEarliest: "最早",
+  peakHeightSunset: "夏至の日の日没との差：{{seconds}} 秒",
+  peakHeightSunrise: "夏至の日の日の出との差：{{seconds}} 秒",
   otherExtrema: "ほかにも山があります",
   noSolstice: "至点が存在しない（昼の長さが一定）",
   noEvents: "定義できない",

@@ -6,7 +6,7 @@ import { i18n, setupI18n } from "../i18n";
 import { DEFAULT_PARAMS } from "../presets";
 import { yearResultFor } from "../store/derived";
 import { ResultsView } from "./ResultsPanel";
-import { buildResultRows, type Translate } from "./results";
+import { buildResultRows, peakHeightSeconds, type Translate } from "./results";
 
 const ALL = {
   latestSunset: true,
@@ -40,6 +40,20 @@ describe("buildResultRows", () => {
     );
     expect(v.rows[0]?.cells[0]?.reference).toBe("夏至");
     expect(v.epsilonNotes).toEqual([null]);
+  });
+
+  it("山の高さ：東京では日没最遅日の日没が夏至の日より約 50 秒遅い（日の出は逆向き）", () => {
+    const r = yearResultFor(earth);
+    const sunset = peakHeightSeconds("latestSunset", r);
+    const sunrise = peakHeightSeconds("earliestSunrise", r);
+    expect(sunset).toBeGreaterThan(45);
+    expect(sunset).toBeLessThan(60);
+    expect(sunrise).toBeLessThan(0);
+    expect(peakHeightSeconds("earliestSunset", r)).toBeNull();
+    const v = rowsFor([earth]);
+    expect(v.rows[0]?.cells[0]?.notes[0]).toMatch(
+      /^夏至の日の日没との差：\+5\d 秒$/,
+    );
   });
 
   it("show で行を絞る", () => {
