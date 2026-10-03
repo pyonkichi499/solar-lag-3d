@@ -2,7 +2,7 @@
 // 惑星は半径 1。z = 黄道の北極。惑星に固定した座標系（x = 観測者の子午線、z = 自転軸）を group に持たせる。
 import { Html, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { type CSSProperties, useMemo, useRef } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { EARTH, sceneState } from "../../engine";
 import { yearResultFor } from "../../store/derived";
@@ -121,6 +121,8 @@ export function EarthView({
   );
   const terminator = useMemo(() => latitudeCircle(0, R * 1.008), []);
   const ribbon = useMemo(() => latitudeRibbon(phi), [phi]);
+  // props で渡したジオメトリは R3F が破棄しないため、作り直すたびに自分で解放する
+  useEffect(() => () => ribbon.dispose(), [ribbon]);
   const observerPos = useMemo<Vec3>(() => {
     const p = (phi * Math.PI) / 180;
     return [R * Math.cos(p), 0, R * Math.sin(p)];
