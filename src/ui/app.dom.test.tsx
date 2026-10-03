@@ -50,6 +50,9 @@ describe("App", () => {
     mount();
     expect(container.textContent).toContain("日没最遅日");
     expect(
+      container.querySelector('.intro a[href$="docs/guide.md"]'),
+    ).not.toBeNull();
+    expect(
       container.querySelector('[role="tab"][aria-selected="true"]'),
     ).not.toBeNull();
 

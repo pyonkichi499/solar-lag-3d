@@ -29,6 +29,7 @@ const messages: Record<string, string> = {
   latestSunrise: "Latest sunrise",
   play: "Play",
   pause: "Pause",
+  jumpToLatest: "Jump to latest sunset",
   lockYAxis: "Lock the vertical axes",
   daySlider: "Day (days from summer solstice)",
   equatorNote:

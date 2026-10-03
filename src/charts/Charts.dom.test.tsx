@@ -21,7 +21,7 @@ beforeAll(() => {
 afterEach(() => {
   act(() => root.unmount());
   container.remove();
-  useStore.setState({ lockYAxis: false });
+  useStore.setState({ lockYAxis: false, day: 0, playing: false });
 });
 
 function mount() {
@@ -45,5 +45,18 @@ describe("Charts の縦軸の固定", () => {
 
     act(() => useStore.getState().setLockYAxis(false));
     expect(box?.checked).toBe(false);
+  });
+
+  it("「日没最遅日へ」で日付カーソルが日没最遅日（約 +8 日）に移り、再生は止まる", () => {
+    useStore.setState({ day: -30, playing: true });
+    mount();
+    const button = [...container.querySelectorAll("button")].find((b) =>
+      b.textContent?.includes("日没最遅日へ"),
+    );
+    act(() => button?.click());
+    const { day, playing } = useStore.getState();
+    expect(day).toBeGreaterThan(7);
+    expect(day).toBeLessThan(9);
+    expect(playing).toBe(false);
   });
 });

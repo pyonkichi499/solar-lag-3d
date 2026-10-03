@@ -13,6 +13,9 @@ const en: typeof ja = {
   preset_noTilt: "No tilt",
   preset_mars: "Mars-like",
   preset_extremeTilt: "Extreme tilt",
+  introText:
+    "The summer solstice (the longest day) and the day of the latest sunset are not the same day. On Earth today at Tokyo's latitude, the latest sunset comes about 8 days after the solstice. Change the axial tilt, eccentricity, perihelion and latitude to see how this lag changes.",
+  introGuide: "How it works (in Japanese)",
   language: "Language",
   share: "Share",
   shareCopied: "URL copied",

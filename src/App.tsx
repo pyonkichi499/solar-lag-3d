@@ -3,6 +3,7 @@ import { Charts } from "./charts/Charts";
 import { Scene } from "./scene/Scene";
 import { usePlayback } from "./store/playback";
 import { Header } from "./ui/Header";
+import { Intro } from "./ui/Intro";
 import { ParamPanel } from "./ui/ParamPanel";
 import { ResultsPanel } from "./ui/ResultsPanel";
 
@@ -11,6 +12,7 @@ export function App() {
   return (
     <div className="app">
       <Header />
+      <Intro />
       <main className="app-main">
         <div className="col-left">
           <ParamPanel />

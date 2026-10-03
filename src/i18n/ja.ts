@@ -11,6 +11,9 @@ const ja = {
   preset_noTilt: "傾き0",
   preset_mars: "火星風",
   preset_extremeTilt: "極端な傾き",
+  introText:
+    "夏至（昼が一番長い日）と日没が一番遅い日は、同じ日ではありません。現在の地球・東京では、日没の最遅日は夏至の約 8 日後です。地軸の傾き・離心率・近日点・緯度を変えて、このズレがどう変わるかを比べられます。",
+  introGuide: "仕組みの解説（日本語）",
   language: "言語",
   share: "共有",
   shareCopied: "URL をコピーしました",

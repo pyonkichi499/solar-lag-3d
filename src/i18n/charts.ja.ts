@@ -29,6 +29,7 @@ const messages: Record<string, string> = {
   latestSunrise: "日の出最遅日",
   play: "再生",
   pause: "一時停止",
+  jumpToLatest: "日没最遅日へ",
   lockYAxis: "縦軸を固定",
   daySlider: "日付（夏至からの日数）",
   equatorNote:

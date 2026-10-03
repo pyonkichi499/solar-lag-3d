@@ -585,6 +585,11 @@ export function Charts() {
   const playing = useStore((s) => s.playing);
   const setDay = useStore((s) => s.setDay);
   const setPlaying = useStore((s) => s.setPlaying);
+  const activeIndex = useStore((s) => s.activeIndex);
+  // 選択中のセットの日没最遅日（山があるか白夜・極夜の境界のときだけ移動できる）
+  const latest = results[activeIndex]?.lags.latestSunset;
+  const latestDay =
+    latest && latest.kind !== "undefined" ? latest.lagDays : null;
 
   const boxRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(720);
@@ -708,6 +713,18 @@ export function Charts() {
           style={{ minWidth: 44, minHeight: 36, fontSize: 16 }}
         >
           {playing ? "⏸" : "▶"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            if (latestDay === null) return;
+            setPlaying(false);
+            setDay(clamp(latestDay, -HALF, HALF));
+          }}
+          disabled={latestDay === null}
+          style={{ minHeight: 36, fontSize: 12 }}
+        >
+          {t("charts.jumpToLatest")}
         </button>
         <input
           type="range"
