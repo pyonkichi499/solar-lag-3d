@@ -29,6 +29,7 @@ const messages: Record<string, string> = {
   latestSunrise: "Latest sunrise",
   play: "Play",
   pause: "Pause",
+  lockYAxis: "Lock the vertical axes",
   daySlider: "Day (days from summer solstice)",
   equatorNote:
     "When the latitude crosses 0, the reference solstice switches by half a year and the chart jumps. This is physically correct.",

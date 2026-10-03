@@ -579,6 +579,7 @@ export function Charts() {
   const sets = useStore((s) => s.sets);
   const show = useStore((s) => s.show);
   const lockY = useStore((s) => s.lockYAxis);
+  const setLockY = useStore((s) => s.setLockYAxis);
   const lang = useStore((s) => s.lang);
   const day = useStore((s) => s.day);
   const playing = useStore((s) => s.playing);
@@ -722,6 +723,14 @@ export function Charts() {
           {cursorLabel}
         </output>
       </div>
+      <label className="check" style={{ marginTop: 6, fontSize: 12 }}>
+        <input
+          type="checkbox"
+          checked={lockY}
+          onChange={(e) => setLockY(e.target.checked)}
+        />
+        {t("charts.lockYAxis")}
+      </label>
       <p style={{ margin: "6px 0 0", fontSize: 11, opacity: 0.7 }}>
         {t("charts.equatorNote")}
       </p>

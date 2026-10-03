@@ -29,6 +29,7 @@ const messages: Record<string, string> = {
   latestSunrise: "日の出最遅日",
   play: "再生",
   pause: "一時停止",
+  lockYAxis: "縦軸を固定",
   daySlider: "日付（夏至からの日数）",
   equatorNote:
     "緯度が 0 をまたぐと基準の至点が半年分切り替わるため、グラフが大きく跳びます。物理的に正しい振る舞いです。",
